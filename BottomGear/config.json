@@ -1,0 +1,21 @@
+﻿{
+  "PiShockConfig": {
+    "Username": "(provide PiShock username here)",
+    "ApiKey": "(provide PiShock API key here)",
+    "Devices": [
+      {
+        "ShareCode": "(provide shocker's share code here)",
+        "DeviceId": "(provider shocker's device ID here, currently unused until local requests get implemented)",
+        "Strength": 10,
+        "Duration": 1,
+        "ParameterName": "ShockMe",
+        "ShockType": 0,
+        "LogName": "BottomGear"
+      }
+    ]
+  },
+  "OscConfig": {
+    "Address": "127.0.0.1",
+    "Port": 9001
+  }
+}

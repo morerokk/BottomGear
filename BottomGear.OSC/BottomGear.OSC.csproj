@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Gebruiker\.nuget\packages\rug.osc.core\1.0.0\contentFiles\any\netstandard2.1\LICENSE.txt" />
+    <Content Remove="C:\Users\Gebruiker\.nuget\packages\rug.osc.core\1.0.0\contentFiles\any\netstandard2.1\README.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Rug.Osc.Core" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>
