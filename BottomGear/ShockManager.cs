@@ -80,8 +80,26 @@ namespace BottomGear
 
         private void Shock(PiShockDevice device)
         {
-            // Check for randomized or replacement parameters first
-            if(!string.IsNullOrWhiteSpace(device.RandomizeParameterName))
+            // Check for replacement parameters
+            if (!string.IsNullOrWhiteSpace(device.StrengthParameterName))
+            {
+                // Parameter is between 0.0f and 1.0f, remap that to 0-100 int
+                if (AnimatorParameters.TryGetValue(device.StrengthParameterName, out var param))
+                {
+                    device.Strength = (int)Math.Round(param.FloatValue * 100, 0);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(device.DurationParameterName))
+            {
+                // Parameter is between 0.0f and 1.0f, remap that to 0-15 int
+                if (AnimatorParameters.TryGetValue(device.DurationParameterName, out var param))
+                {
+                    device.Duration = (int)Math.Round(Remap(param.FloatValue, 0f, 1f, 0f, 15f), 0);
+                }
+            }
+
+            // Check for randomized parameters
+            if (!string.IsNullOrWhiteSpace(device.RandomizeParameterName))
             {
                 if (AnimatorParameters.TryGetValue(device.RandomizeParameterName, out var param) && param.BoolValue)
                 {
@@ -90,22 +108,7 @@ namespace BottomGear
                     device.Duration = random.Next(0, 16);
                 }
             }
-            else if (!string.IsNullOrWhiteSpace(device.StrengthParameterName))
-            {
-                // Parameter is between 0.0f and 1.0f, remap that to 0-100 int
-                if(AnimatorParameters.TryGetValue(device.StrengthParameterName, out var param))
-                {
-                    device.Strength = (int)Math.Round(param.FloatValue * 100, 0);
-                }
-            }
-            else if (!string.IsNullOrWhiteSpace(device.DurationParameterName))
-            {
-                // Parameter is between 0.0f and 1.0f, remap that to 0-15 int
-                if (AnimatorParameters.TryGetValue(device.DurationParameterName, out var param))
-                {
-                    device.Duration = (int)Math.Round(Remap(param.FloatValue, 0f, 1f, 0f, 15f), 0);
-                }
-            }
+
 
             device.NotifyShocked();
             PiShockClient.Shock(device);

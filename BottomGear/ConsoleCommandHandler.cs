@@ -26,11 +26,6 @@ namespace BottomGear
                     PiShockConfigProvider.Config.ShockDurationOverride = newDuration;
                 }
             }
-
-            if (input.Equals("test", StringComparison.OrdinalIgnoreCase))
-            {
-                
-            }
         }
     }
 }
