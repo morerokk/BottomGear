@@ -15,6 +15,10 @@ namespace BottomGear.PiShock.Devices
         public string LogName { get; set; }
         public string DeviceId { get; set; }
 
+        public string StrengthParameterName { get; set; }
+        public string DurationParameterName { get; set; }
+        public string RandomizeParameterName { get; set; }
+
         // Unix time when this device was last shocked
         private long LastShockTime;
 

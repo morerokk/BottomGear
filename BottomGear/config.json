@@ -2,6 +2,7 @@
   "PiShockConfig": {
     "Username": "(provide PiShock username here)",
     "ApiKey": "(provide PiShock API key here)",
+    "Debug": false,
     "Devices": [
       {
         "ShareCode": "(provide shocker's share code here)",
@@ -10,7 +11,10 @@
         "Duration": 1,
         "ParameterName": "ShockMe",
         "ShockType": 0,
-        "LogName": "BottomGear"
+        "LogName": "BottomGear",
+        "StrengthParameterName": "ShockStrength",
+        "DurationParameterName": "ShockDuration",
+        "RandomizeParameterName": "ShockRandom"
       }
     ]
   },

@@ -30,6 +30,13 @@ namespace BottomGear.PiShock.PiShockApi
             + "\",\"Duration\":\"" + device.Duration
             + "\",\"Op\":\"" + (int)device.ShockType + "\"}";
 
+            if(config.Debug == true)
+            {
+                Console.WriteLine("Making request:");
+                Console.WriteLine(request);
+                return;
+            }
+
             Task.Run(async () =>
             {
                 await HttpClient.PostAsync(PiShockApiEndpoint, new StringContent(request, Encoding.UTF8, "application/json"));

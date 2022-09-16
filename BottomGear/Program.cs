@@ -25,6 +25,7 @@ namespace BottomGear
             var oscConfig = config.GetRequiredSection("OscConfig").Get<OscConfig>();
             var piShockConfig = config.GetRequiredSection("PiShockConfig").Get<PiShockConfig>();
             PiShockConfigProvider.Initialize(piShockConfig);
+            var consoleCommandHandler = new ConsoleCommandHandler();
 
             Console.WriteLine("Starting OSC Listener...");
             using (var listener = new OSCListener(IPAddress.Parse(oscConfig.Address), oscConfig.Port))
@@ -52,6 +53,10 @@ namespace BottomGear
                         if (input.Equals("quit", StringComparison.OrdinalIgnoreCase))
                         {
                             quit = true;
+                        }
+                        else
+                        {
+                            consoleCommandHandler.HandleCommand(input);
                         }
                     }
 
