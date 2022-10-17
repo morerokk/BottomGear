@@ -17,13 +17,6 @@ namespace BottomGear.OSC.Interpreters
 
             string address = message.Address;
 
-            if(OscConfigProvider.Config.Debug)
-            {
-                Console.WriteLine("Received OSC message:");
-                Console.WriteLine(address);
-                Console.WriteLine(value);
-            }
-
             if(!address.StartsWith("/avatar/parameters/"))
             {
                 throw new ArgumentException("Message address must start with \"/avatar/parameters\" to be interpreted as an animator parameter.", nameof(message));

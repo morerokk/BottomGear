@@ -1,4 +1,5 @@
-﻿using BottomGear.OSC.Interpreters;
+﻿using BottomGear.OSC.Config;
+using BottomGear.OSC.Interpreters;
 using BottomGear.OSC.Messages;
 using BottomGear.PiShock.Config;
 using BottomGear.PiShock.Devices;
@@ -14,8 +15,6 @@ namespace BottomGear
 {
     public class ShockManager : IDisposable
     {
-        private PiShockConfig Config;
-
         private ConcurrentDictionary<string, VRCAnimatorParam> AnimatorParameters = new ConcurrentDictionary<string, VRCAnimatorParam>();
 
         private VRCAnimatorParameterInterpreter Interpreter;
@@ -28,20 +27,29 @@ namespace BottomGear
 
         public ShockManager()
         {
-            this.Config = PiShockConfigProvider.Config;
             this.Interpreter = new VRCAnimatorParameterInterpreter();
             this.PiShockClient = new PiShockClient();
         }
 
         public void OnAnimatorParameterChanged(object sender, OscMessage message)
         {
-            if (!message.Address.StartsWith("/avatar/parameters/"))
+            if (OscConfigProvider.Config.Debug)
             {
-                return;
+                Console.WriteLine("Received OSC message:");
+                Console.WriteLine(message.Address);
+                Console.WriteLine(message[0]);
             }
 
-            var param = Interpreter.InterpretOscMessage(message);
-            AnimatorParameters[param.Name] = param;
+            if (message.Address.StartsWith("/avatar/parameters/"))
+            {
+                var param = Interpreter.InterpretOscMessage(message);
+                AnimatorParameters[param.Name] = param;
+            }
+            else if(message.Address.StartsWith("/avatar/change"))
+            {
+                // On avatar change, reset the dictionary
+                AnimatorParameters.Clear();
+            }
         }
 
         public void StartUpdateLoop()
@@ -56,7 +64,7 @@ namespace BottomGear
             UpdateLoopThread = new Thread(() => {
                 while(Running)
                 {
-                    foreach(var device in Config.Devices)
+                    foreach(var device in PiShockConfigProvider.Config.Devices)
                     {
                         if(AnimatorParameters.TryGetValue(device.ParameterName, out VRCAnimatorParam param) && param.BoolValue && device.CanShock())
                         {
@@ -95,7 +103,6 @@ namespace BottomGear
                     device.Duration = (int)Math.Round(param.FloatValue * 10, 0);
                 }
             }
-
 
             device.NotifyShocked();
             PiShockClient.Shock(device);
