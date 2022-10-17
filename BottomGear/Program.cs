@@ -25,16 +25,19 @@ namespace BottomGear
             var oscConfig = config.GetRequiredSection("OscConfig").Get<OscConfig>();
             var piShockConfig = config.GetRequiredSection("PiShockConfig").Get<PiShockConfig>();
             PiShockConfigProvider.Initialize(piShockConfig);
-            var consoleCommandHandler = new ConsoleCommandHandler();
+            OscConfigProvider.Initialize(oscConfig);
 
             Console.WriteLine("Starting OSC Listener...");
+
+            Thread listenerThread = null;
+
             using (var listener = new OSCListener(IPAddress.Parse(oscConfig.Address), oscConfig.Port))
             {
                 using (var shockManager = new ShockManager())
                 {
                     listener.MessageReceived += shockManager.OnAnimatorParameterChanged;
 
-                    var listenerThread = new Thread(() => {
+                    listenerThread = new Thread(() => {
                         listener.Start();
                     });
 
@@ -54,16 +57,15 @@ namespace BottomGear
                         {
                             quit = true;
                         }
-                        else
-                        {
-                            consoleCommandHandler.HandleCommand(input);
-                        }
                     }
-
-                    listenerThread.Join();
                 }
             }
-            
+
+            if (listenerThread != null)
+            {
+                listenerThread.Join();
+            }
+
             Console.WriteLine("OSC Listener stopped.");
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();

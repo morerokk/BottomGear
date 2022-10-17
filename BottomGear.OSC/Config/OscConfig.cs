@@ -8,5 +8,6 @@ namespace BottomGear.OSC.Config
     {
         public string Address { get; set; }
         public int Port { get; set; }
+        public bool Debug { get; set; }
     }
 }

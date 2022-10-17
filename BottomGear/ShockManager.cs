@@ -24,8 +24,6 @@ namespace BottomGear
 
         private Thread UpdateLoopThread;
 
-        private Random random = new Random();
-
         public bool Running { get; private set; }
 
         public ShockManager()
@@ -91,21 +89,10 @@ namespace BottomGear
             }
             if (!string.IsNullOrWhiteSpace(device.DurationParameterName))
             {
-                // Parameter is between 0.0f and 1.0f, remap that to 0-15 int
+                // Parameter is between 0.0f and 1.0f, remap that to 0-10 int
                 if (AnimatorParameters.TryGetValue(device.DurationParameterName, out var param))
                 {
-                    device.Duration = (int)Math.Round(Remap(param.FloatValue, 0f, 1f, 0f, 15f), 0);
-                }
-            }
-
-            // Check for randomized parameters
-            if (!string.IsNullOrWhiteSpace(device.RandomizeParameterName))
-            {
-                if (AnimatorParameters.TryGetValue(device.RandomizeParameterName, out var param) && param.BoolValue)
-                {
-                    // Randomize (lol)
-                    device.Strength = random.Next(0, 101);
-                    device.Duration = random.Next(0, 16);
+                    device.Duration = (int)Math.Round(param.FloatValue * 10, 0);
                 }
             }
 
@@ -113,21 +100,5 @@ namespace BottomGear
             device.NotifyShocked();
             PiShockClient.Shock(device);
         }
-
-        private static float Remap(float from, float fromMin, float fromMax, float toMin, float toMax)
-        {
-            var fromAbs = from - fromMin;
-            var fromMaxAbs = fromMax - fromMin;
-
-            var normal = fromAbs / fromMaxAbs;
-
-            var toMaxAbs = toMax - toMin;
-            var toAbs = toMaxAbs * normal;
-
-            var to = toAbs + toMin;
-
-            return to;
-        }
-
     }
 }

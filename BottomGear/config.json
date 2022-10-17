@@ -13,13 +13,13 @@
         "ShockType": 0,
         "LogName": "BottomGear",
         "StrengthParameterName": "ShockStrength",
-        "DurationParameterName": "ShockDuration",
-        "RandomizeParameterName": "ShockRandom"
+        "DurationParameterName": "ShockDuration"
       }
     ]
   },
   "OscConfig": {
     "Address": "127.0.0.1",
-    "Port": 9001
+    "Port": 9001,
+    "Debug": false
   }
 }
