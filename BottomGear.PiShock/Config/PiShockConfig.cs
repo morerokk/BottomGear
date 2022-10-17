@@ -9,6 +9,7 @@ namespace BottomGear.PiShock.Config
     {
         public string Username { get; set; }
         public string ApiKey { get; set; }
+        public string ApiEndpoint { get; set; }
         public PiShockDevice[] Devices { get; set; }
 
         // Global overrides that can be set by console command on the fly

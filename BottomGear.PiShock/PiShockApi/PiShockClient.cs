@@ -39,7 +39,7 @@ namespace BottomGear.PiShock.PiShockApi
 
             Task.Run(async () =>
             {
-                var result = await HttpClient.PostAsync(PiShockApiEndpoint, new StringContent(request, Encoding.UTF8, "application/json"));
+                var result = await HttpClient.PostAsync(config.ApiEndpoint, new StringContent(request, Encoding.UTF8, "application/json"));
                 if(!result.IsSuccessStatusCode)
                 {
                     Console.WriteLine("The Pishock API returned an error!");

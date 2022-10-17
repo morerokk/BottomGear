@@ -2,6 +2,7 @@
   "PiShockConfig": {
     "Username": "(provide PiShock username here)",
     "ApiKey": "(provide PiShock API key here)",
+    "ApiEndpoint": "https://do.pishock.com/api/apioperate",
     "Debug": false,
     "Devices": [
       {
