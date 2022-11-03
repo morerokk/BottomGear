@@ -1,9 +1,6 @@
-﻿using BottomGear.OSC.Config;
-using BottomGear.OSC.Messages;
+﻿using BottomGear.OSC.Messages;
 using Rug.Osc.Core;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BottomGear.OSC.Interpreters
 {
@@ -11,7 +8,6 @@ namespace BottomGear.OSC.Interpreters
     {
         public VRCAnimatorParam InterpretOscMessage(OscMessage message)
         {
-            //return new VRCAnimatorParamMessage(message.Address, message[0]);
             object value = message[0];
             Type type = value.GetType();
 
@@ -38,7 +34,7 @@ namespace BottomGear.OSC.Interpreters
             }
             else
             {
-                throw new ArgumentException("Unknown parameter type in OSC Message", nameof(message));
+                throw new ArgumentException("Unknown parameter type in OSC Message. Only bool, int and float are supported.", nameof(message));
             }
         }
     }

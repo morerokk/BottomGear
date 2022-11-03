@@ -17,18 +17,23 @@ namespace BottomGear
     {
         private ConcurrentDictionary<string, VRCAnimatorParam> AnimatorParameters = new ConcurrentDictionary<string, VRCAnimatorParam>();
 
-        private VRCAnimatorParameterInterpreter Interpreter;
+        private readonly VRCAnimatorParameterInterpreter Interpreter;
 
-        private PiShockClient PiShockClient;
+        private readonly IPiShockClient PiShockClient;
 
         private Thread UpdateLoopThread;
 
         public bool Running { get; private set; }
 
-        public ShockManager()
+        public ShockManager() : this(new VRCAnimatorParameterInterpreter(), new PiShockClient())
         {
-            this.Interpreter = new VRCAnimatorParameterInterpreter();
-            this.PiShockClient = new PiShockClient();
+
+        }
+
+        public ShockManager(VRCAnimatorParameterInterpreter interpreter, IPiShockClient piShockClient)
+        {
+            this.Interpreter = interpreter;
+            this.PiShockClient = piShockClient;
         }
 
         public void OnAnimatorParameterChanged(object sender, OscMessage message)

@@ -1,17 +1,16 @@
 ﻿using BottomGear.PiShock.Config;
 using BottomGear.PiShock.Devices;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace BottomGear.PiShock.PiShockApi
 {
-    public class PiShockClient : IDisposable
+    public class PiShockClient : IPiShockClient
     {
-        private HttpClient HttpClient { get; set; }
-        private static readonly string PiShockApiEndpoint = "https://do.pishock.com/api/apioperate";
+        private readonly HttpClient HttpClient;
 
         public PiShockClient()
         {
@@ -22,30 +21,32 @@ namespace BottomGear.PiShock.PiShockApi
         {
             var config = PiShockConfigProvider.Config;
 
-            string request = "{\"Username\":\"" + config.Username
-            + "\",\"Apikey\":\"" + config.ApiKey
-            + "\",\"Name\":\"" + device.LogName
-            + "\",\"Code\":\"" + device.ShareCode
-            + "\",\"Intensity\":\"" + device.Strength
-            + "\",\"Duration\":\"" + device.Duration
-            + "\",\"Op\":\"" + (int)device.ShockType + "\"}";
+            var shockRequest = new ShockRequest()
+            {
+                Apikey = config.ApiKey,
+                Username = config.Username,
+                Code = device.ShareCode,
+                Duration = device.Duration.ToString(),
+                Intensity = device.Strength.ToString(),
+                Name = device.LogName,
+                Op = device.ShockType.ToString(),
+            };
+
+            string requestBody = JsonSerializer.Serialize(shockRequest);
 
             if(config.Debug == true)
             {
                 Console.WriteLine("Making request:");
-                Console.WriteLine(request);
-                return;
+                Console.WriteLine(requestBody);
             }
 
             Task.Run(async () =>
             {
-                var result = await HttpClient.PostAsync(config.ApiEndpoint, new StringContent(request, Encoding.UTF8, "application/json"));
-                if(!result.IsSuccessStatusCode)
+                var result = await HttpClient.PostAsync(config.ApiEndpoint, new StringContent(requestBody, Encoding.UTF8, "application/json"));
+                string responseContent = await result.Content.ReadAsStringAsync();
+                if (!result.IsSuccessStatusCode || IsApiResponseAnError(responseContent))
                 {
-                    Console.WriteLine("The Pishock API returned an error!");
-                    string responseContent = await result.Content.ReadAsStringAsync();
-                    Console.WriteLine("API Error received:");
-                    Console.WriteLine(responseContent);
+                    ExplainApiError(responseContent);
                 }
             }).ContinueWith(t =>
             {
@@ -60,6 +61,35 @@ namespace BottomGear.PiShock.PiShockApi
         public void Dispose()
         {
             HttpClient.Dispose();
+        }
+
+        private bool IsApiResponseAnError(string response)
+        {
+            if (!string.IsNullOrWhiteSpace(response) && (
+                response.Equals("Device currently not connected.", StringComparison.OrdinalIgnoreCase)
+                || response.Equals("Not Authorized.", StringComparison.OrdinalIgnoreCase)
+            ))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void ExplainApiError(string response)
+        {
+            Console.WriteLine("The Pishock API returned an error!");
+            Console.WriteLine("API Error received:");
+            Console.WriteLine(response);
+
+            if (response.Equals("Device currently not connected.", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("The API request was successful, but your shocker is not turned on.");
+            }
+            else if(response.Equals("Not Authorized.", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Error logging into the API. Make sure your Username, API Key and Share Code are all correct. Try generating a new API Key and Share Code.");
+            }
         }
     }
 }

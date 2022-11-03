@@ -72,7 +72,7 @@ namespace BottomGear
                         CancelIoEx(handle, IntPtr.Zero);
                     };
 
-                    while (!quit)
+                    while (!quit && listenerThread.IsAlive)
                     {
                         try
                         {
